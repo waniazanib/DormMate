@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model users {
+  id                String          @id @default(uuid())
+  name              String
+  email             String          @unique
+  university        String
+  monthly_allowance Decimal
+  password_hash     String
+  created_at        DateTime        @default(now())
+  dorm_group_id     String?
+  
+  // Relations
+  dorm_group        dorm_groups?    @relation(name: "DormGroupMembers", fields: [dorm_group_id], references: [id])
+  created_groups    dorm_groups[]   @relation("GroupCreator")
+  paid_expenses     expenses[]      @relation("ExpensePayer")
+  expense_splits    expense_splits[]
+  assignments       assignments[]
+  activity_posts    activity_posts[]
+  activity_joins    activity_joins[]
+  personal_expenses personal_expenses[]
+  study_requests_sent study_sessions[] @relation("StudyRequester")
+  study_requests_received study_sessions[] @relation("StudyReceiver")
+  study_availability study_availability[]
+}
+
+model dorm_groups {
+  id           String      @id @default(uuid())
+  name         String
+  invite_code  String      @unique
+  university   String
+  created_by   String
+  created_at   DateTime    @default(now())
+  
+  // Relations
+  creator      users       @relation("GroupCreator", fields: [created_by], references: [id])
+  members      users[]     @relation("DormGroupMembers")
+  expenses     expenses[]
+}
+
+model expenses {
+  id                  String      @id @default(uuid())
+  dorm_group_id       String
+  title               String
+  amount              Decimal
+  paid_by             String
+  created_at          DateTime    @default(now())
+  is_recurring        Boolean     @default(false)
+  recurrence_interval String?
+  
+  // Relations
+  dorm_group          dorm_groups @relation(fields: [dorm_group_id], references: [id])
+  payer               users       @relation("ExpensePayer", fields: [paid_by], references: [id])
+  splits              expense_splits[]
+}
+
+model expense_splits {
+  id          String    @id @default(uuid())
+  expense_id  String
+  user_id     String
+  amount_owed Decimal
+  is_settled  Boolean   @default(false)
+  settled_at  DateTime?
+
+  // Relations
+  expense     expenses  @relation(fields: [expense_id], references: [id])
+  user        users     @relation(fields: [user_id], references: [id])
+}
+
+model assignments {
+  id              String    @id @default(uuid())
+  user_id         String
+  title           String
+  subject         String
+  deadline        DateTime
+  estimated_hours Int
+  is_complete     Boolean   @default(false)
+  completed_at    DateTime?
+  created_at      DateTime  @default(now())
+
+  // Relations
+  user            users     @relation(fields: [user_id], references: [id])
+}
+
+model activity_posts {
+  id          String    @id @default(uuid())
+  user_id     String
+  university  String
+  content     String
+  category    String    // Study, Food, Sports, Chill, Other
+  expires_at  DateTime
+  created_at  DateTime  @default(now())
+
+  // Relations
+  user        users     @relation(fields: [user_id], references: [id])
+  joins       activity_joins[]
+}
+
+model activity_joins {
+  id          String   @id @default(uuid())
+  post_id     String
+  user_id     String
+  joined_at   DateTime @default(now())
+
+  // Relations
+  post        activity_posts @relation(fields: [post_id], references: [id])
+  user        users          @relation(fields: [user_id], references: [id])
+}
+
+model personal_expenses {
+  id          String   @id @default(uuid())
+  user_id     String
+  title       String
+  amount      Decimal
+  category    String   // Food, Transport, Entertainment, Supplies, Other
+  date        DateTime
+  created_at  DateTime @default(now())
+
+  // Relations
+  user        users    @relation(fields: [user_id], references: [id])
+}
+
+model study_sessions {
+  id             String   @id @default(uuid())
+  requester_id   String
+  receiver_id    String
+  subject        String
+  proposed_time  DateTime
+  location       String
+  status         String   // pending, accepted, declined
+  created_at     DateTime @default(now())
+
+  // Relations
+  requester      users    @relation("StudyRequester", fields: [requester_id], references: [id])
+  receiver       users    @relation("StudyReceiver", fields: [receiver_id], references: [id])
+}
+
+model study_availability {
+  id          String   @id @default(uuid())
+  user_id     String
+  subject     String
+  day_of_week Int      // 0-6
+  start_time  String
+  end_time    String
+
+  // Relations
+  user        users    @relation(fields: [user_id], references: [id])
+}

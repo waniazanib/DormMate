@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Quicksand", ui-sans-serif, system-ui, sans-serif;
+  --color-dm-dark-green: #0A3323;
+  --color-dm-moss: #839958;
+  --color-dm-beige: #F7F4D5;
+  --color-dm-rosy: #D3968C;
+  --color-dm-midnight: #105666;
+}
+
+body {
+  background-color: var(--color-dm-beige);
+  color: var(--color-dm-dark-green);
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24'><text y='20' font-size='20'>🐾</text></svg>") 16 16, auto;
+}
+
+a, button, [role="button"], input, select, textarea {
+  cursor: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 24 24'><text y='20' font-size='20'>✨</text></svg>") 16 16, pointer !important;
+}
