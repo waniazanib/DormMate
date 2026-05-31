@@ -99,34 +99,6 @@ Start the production server:
 npm start
 ```
 
-### Available Scripts
-
-- `npm run dev` - Start development server
-- `npm start` - Run production server
-- `npm run build` - Build for production
-- `npm run preview` - Preview production build locally
-- `npm run clean` - Remove build artifacts
-- `npm run lint` - Run TypeScript type checking
-
-## Environment Variables
-
-Create a `.env` file in the root directory with the following variables:
-
-```
-# Database
-DATABASE_URL=postgresql://user:password@localhost:5432/dormmate
-
-# JWT Secret
-JWT_SECRET=your-secure-jwt-secret-key
-
-# Google GenAI (optional)
-GOOGLE_GENAI_API_KEY=your-api-key
-
-# Server Configuration
-NODE_ENV=development
-PORT=3000
-```
-
 ## Folder Structure
 
 ```
